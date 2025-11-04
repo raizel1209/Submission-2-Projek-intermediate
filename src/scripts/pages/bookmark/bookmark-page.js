@@ -1,4 +1,4 @@
-import BookmarkIdb from "../../data/database"; // Import logika IndexedDB
+import BookmarkIdb from "../../data/database";
 
 export default class BookmarkPage {
   #bookmarkListContainer = null;
@@ -29,9 +29,7 @@ export default class BookmarkPage {
     this.#addFadeInEffect();
   }
 
-  /**
-   * Mengambil dan menampilkan bookmark dari IndexedDB.
-   */
+
   async #loadBookmarks() {
     try {
       const bookmarks = await BookmarkIdb.getAllBookmarks();
@@ -43,8 +41,8 @@ export default class BookmarkPage {
   }
 
   /**
-   * Menampilkan daftar bookmark di halaman.
-   * @param {Array} bookmarks - Array objek cerita dari IndexedDB.
+   * Menampilkan bookmark di halaman.
+   * @param {Array} bookmarks 
    */
   #displayBookmarks(bookmarks) {
     if (!bookmarks || bookmarks.length === 0) {
@@ -56,7 +54,7 @@ export default class BookmarkPage {
       .map((story) => this.#generateBookmarkItem(story))
       .join("");
 
-    // Tambahkan event listener untuk tombol hapus
+
     this.#bookmarkListContainer.querySelectorAll('.delete-bookmark-btn').forEach(button => {
       button.addEventListener('click', async (event) => {
         const storyId = event.target.dataset.id;
@@ -67,10 +65,9 @@ export default class BookmarkPage {
 
   /**
    * Membuat HTML untuk satu item bookmark.
-   * @param {object} story - Objek cerita.
+   * @param {object} story 
    */
   #generateBookmarkItem(story) {
-    // Anda bisa menyesuaikan tampilan ini agar mirip dengan card di home-page
     return `
       <div class="story-item bookmark-item" data-story-id="${story.id}">
         ${story.photoUrl ? `<img src="${story.photoUrl}" alt="Foto cerita ${story.name || ''}" class="story-image">` : ''}
@@ -86,38 +83,35 @@ export default class BookmarkPage {
 
   /**
    * Menangani aksi penghapusan bookmark.
-   * @param {string} storyId - ID cerita yang akan dihapus.
-   * @param {HTMLElement} buttonElement - Tombol yang diklik.
+   * @param {string} storyId
+   * @param {HTMLElement} buttonElement
    */
   async #handleDeleteBookmark(storyId, buttonElement) {
     if (!storyId) return;
 
-    // Konfirmasi (opsional)
     const confirmation = confirm(`Anda yakin ingin menghapus bookmark untuk cerita ini (${storyId})?`);
     if (!confirmation) return;
 
-    buttonElement.disabled = true; // Nonaktifkan tombol saat proses
+    buttonElement.disabled = true;
     buttonElement.textContent = 'Menghapus...';
 
     try {
       await BookmarkIdb.deleteBookmark(storyId);
       console.log(`Bookmark ${storyId} berhasil dihapus.`);
       
-      // Hapus elemen dari DOM atau muat ulang daftar
       const itemToRemove = this.#bookmarkListContainer.querySelector(`.bookmark-item[data-story-id="${storyId}"]`);
       if (itemToRemove) {
         itemToRemove.remove();
       }
-      // Periksa jika daftar menjadi kosong
       if (this.#bookmarkListContainer.childElementCount === 0) {
          this.#bookmarkListContainer.innerHTML = '<p>Anda belum menyimpan bookmark cerita.</p>';
       }
-      alert('Bookmark berhasil dihapus!'); // Beri notifikasi
+      alert('Bookmark berhasil dihapus!');
 
     } catch (error) {
       console.error(`Gagal menghapus bookmark ${storyId}:`, error);
       alert('Gagal menghapus bookmark. Coba lagi nanti.');
-      buttonElement.disabled = false; // Aktifkan kembali jika gagal
+      buttonElement.disabled = false;
       buttonElement.textContent = 'Hapus Bookmark';
     }
   }

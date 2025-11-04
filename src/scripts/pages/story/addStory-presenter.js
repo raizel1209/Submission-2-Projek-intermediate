@@ -1,25 +1,36 @@
+/**
+ * Kelas presenter untuk menangani logika pengiriman cerita.
+ * Bertanggung jawab atas interaksi antara view dan model untuk fitur tambah cerita.
+ */
 export default class AddStoryPresenter {
   #view;
   #model;
-  #token; // <-- 1. Tambahkan properti untuk token
+  #token;
 
-  // 2. Terima 'token' di constructor
-  constructor({ view, model, token }) { 
+  /**
+   * Konstruktor untuk menginisialisasi presenter dengan view, model, dan token.
+   * @param {Object} params - Parameter inisialisasi.
+   * @param {Object} params.view - Objek view untuk interaksi UI.
+   * @param {Object} params.model - Objek model untuk operasi data.
+   * @param {string} params.token - Token autentikasi untuk API.
+   */
+  constructor({ view, model, token }) {
     this.#view = view;
     this.#model = model;
-    this.#token = token; // <-- 3. Simpan token yang benar
+    this.#token = token;
   }
 
+  /**
+   * Mengirimkan data cerita ke server secara asinkron.
+   * Menampilkan indikator loading, menangani respons, dan memberikan umpan balik kepada pengguna.
+   * @param {FormData} formData - Data formulir cerita yang akan dikirim.
+   */
   async submitStory(formData) {
     this.#view.showSubmitLoadingButton();
 
     try {
-      // 4. HAPUS LOGIKA 'getItem("access_token")' YANG SALAH
-      // Pengecekan token sudah diurus oleh 'view' (add-story.js)
-      // if (!token) ...
-
-      // 5. Gunakan 'this.#token' (token yang benar)
-      const response = await this.#model.addStory(this.#token, formData); 
+      // Mengirim data cerita menggunakan token autentikasi
+      const response = await this.#model.addStory(this.#token, formData);
 
       if (response.error) {
         throw new Error(response.message || "Gagal mengirim cerita.");

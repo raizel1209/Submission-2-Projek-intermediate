@@ -4,13 +4,12 @@ import {
   unsubscribePushNotification,
   getSubscriptionStatus,
 } from "../../utils/notification-helper";
-// 1. IMPORT FUNGSI UNTUK MENGAMBIL TOKEN
 import { getAccessToken } from "../../utils/auth"; 
 
 export default class NotificationPage {
   #toggleButton = null;
   #statusMessage = null;
-  #token = null; // 2. Tambahkan properti untuk menyimpan token
+  #token = null;
 
   async render() {
     const isSupported = isPushNotificationSupported();
@@ -50,7 +49,6 @@ export default class NotificationPage {
       return;
     }
 
-    // Periksa dukungan notifikasi terlebih dahulu
     if (!isPushNotificationSupported()) {
       this.#statusMessage.textContent = "Notifikasi Push tidak didukung di browser ini.";
       this.#toggleButton.disabled = true;
@@ -58,10 +56,8 @@ export default class NotificationPage {
       return;
     }
 
-    // Ambil dan simpan token
     this.#token = getAccessToken();
-    
-    // Cek status login
+
     if (!this.#token) {
       this.#statusMessage.textContent = "Anda harus login untuk mengatur notifikasi.";
       this.#toggleButton.disabled = true;
@@ -69,7 +65,6 @@ export default class NotificationPage {
       return;
     }
 
-    // Cek status notifikasi browser
     const permission = Notification.permission;
     if (permission === 'denied') {
       this.#statusMessage.textContent = "Notifikasi diblokir. Harap aktifkan notifikasi di pengaturan browser.";
@@ -78,7 +73,6 @@ export default class NotificationPage {
       return;
     }
 
-    // Inisialisasi status subscription
     try {
       const isSubscribed = await getSubscriptionStatus();
       this.#updateToggleButtonUI(isSubscribed);
@@ -114,19 +108,16 @@ export default class NotificationPage {
 
     try {
       if (isCurrentlySubscribed) {
-        // 4. Kirim token saat unsubscribe
         await unsubscribePushNotification(this.#token); 
         this.#updateToggleButtonUI(false);
         this.#statusMessage.textContent = "Berhasil berhenti berlangganan notifikasi.";
         console.log("Berhasil unsubscribe.");
       } else {
-        // Minta izin dulu (browser prompt)
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
           throw new Error('Izin notifikasi tidak diberikan.');
         }
-        
-        // Coba subscribe dengan retry jika gagal
+
         let retryCount = 0;
         const maxRetries = 2;
         

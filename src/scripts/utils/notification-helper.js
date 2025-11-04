@@ -1,14 +1,11 @@
-// ISI FILE: src/scripts/utils/notification-helper.js (LENGKAP)
-
-// 1. IMPORT VAPID KEY (pastikan config.js ada di ../config)
-import { VAPID_PUBLIC_KEY } from "../config"; 
-// 2. IMPORT API SERVICE (pastikan api.js ada di ../data/api.js)
+import { VAPID_PUBLIC_KEY } from "../config";
 import * as ApiService from '../data/api';
-// 3. IMPORT FUNGSI AUTENTIKASI (pastikan auth.js ada di ./auth.js)
 import { getAccessToken } from './auth';
 
 /**
- * Mengubah string VAPID public key (Base64) menjadi Uint8Array
+ * Mengubah string VAPID public key (Base64) menjadi Uint8Array.
+ * @param {string} base64String - String VAPID key dalam format Base64.
+ * @returns {Uint8Array} Array byte dari VAPID key.
  */
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -22,25 +19,25 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 /**
- * Memeriksa apakah browser mendukung Service Worker dan Push Manager
+ * Memeriksa apakah browser mendukung Service Worker dan Push Manager.
+ * @returns {boolean} True jika didukung, false jika tidak.
  */
 export function isPushNotificationSupported() {
   return "serviceWorker" in navigator && "PushManager" in window;
 }
 
 /**
- * Mendapatkan service worker yang aktif atau mendaftarkan yang baru
+ * Mendapatkan service worker yang aktif atau mendaftarkan yang baru.
+ * @returns {Promise<ServiceWorkerRegistration>} Promise yang resolve dengan registrasi service worker.
  */
 async function getActiveServiceWorker() {
   try {
-    // Coba dapatkan registrasi yang ada
     let registration = await navigator.serviceWorker.getRegistration();
-    
+
     if (!registration) {
       console.log('Mendaftarkan service worker baru...');
       registration = await navigator.serviceWorker.register('/sw.js');
-      
-      // Tunggu hingga service worker aktif
+
       if (registration.installing) {
         console.log('Menunggu service worker selesai diinstall...');
         await new Promise(resolve => {
@@ -65,7 +62,8 @@ async function getActiveServiceWorker() {
 }
 
 /**
- * Meminta izin notifikasi kepada pengguna
+ * Meminta izin notifikasi kepada pengguna.
+ * @returns {Promise<string>} Promise yang resolve dengan status izin.
  */
 export async function requestNotificationPermission() {
   try {
@@ -81,10 +79,10 @@ export async function requestNotificationPermission() {
 }
 
 /**
- * Mendaftarkan (subscribe) perangkat ke push notification server
+ * Mendaftarkan (subscribe) perangkat ke push notification server.
+ * @returns {Promise<PushSubscription>} Promise yang resolve dengan subscription.
  */
 export async function subscribePushNotification() {
-  // Validasi kondisi awal
   const token = getAccessToken();
   if (!isPushNotificationSupported()) {
     throw new Error("Push Notification tidak didukung di browser ini.");
@@ -93,39 +91,30 @@ export async function subscribePushNotification() {
     throw new Error("Token autentikasi diperlukan untuk subscribe.");
   }
 
-  // Minta izin notifikasi
   await requestNotificationPermission();
 
-  // Dapatkan service worker yang aktif
   const registration = await getActiveServiceWorker();
-  
-  // Periksa subscription yang ada
+
   let subscription = await registration.pushManager.getSubscription();
-  
-  // Jika sudah ada subscription, gunakan yang ada
+
   if (subscription) {
     console.log("Menggunakan subscription yang sudah ada");
     return subscription;
   }
 
-  // Buat subscription baru dengan retry
   const maxRetries = 3;
-  let lastError;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`Mencoba membuat subscription (percobaan ${attempt}/${maxRetries})...`);
-      
-      // Tunggu sebentar jika ini percobaan ulang
+
       if (attempt > 1) {
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
 
-      // Diagnostic: log VAPID key details before subscribing
       try {
         const keyUint8 = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
         console.log('VAPID key length:', keyUint8.length);
-        // log first 8 bytes as hex for quick inspection
         console.log('VAPID key prefix (hex):', Array.from(keyUint8.slice(0,8)).map(b => b.toString(16).padStart(2, '0')).join(' '));
       } catch (keyErr) {
         console.error('Gagal mengonversi VAPID key:', keyErr);
@@ -137,17 +126,14 @@ export async function subscribePushNotification() {
       });
 
       console.log('Subscription berhasil dibuat:', subscription);
-      return subscription;
+      break;
     } catch (error) {
       console.error(`Gagal membuat subscription (percobaan ${attempt}):`, error);
-      lastError = error;
 
-      // Jika bukan AbortError, tidak perlu retry
       if (error.name !== 'AbortError') {
         throw new Error(`Gagal membuat subscription: ${error.message}`);
       }
-      
-      // Jika ini percobaan terakhir, lempar error
+
       if (attempt === maxRetries) {
         throw new Error('Gagal terhubung ke layanan push setelah beberapa percobaan. ' +
           'Pastikan koneksi internet Anda stabil dan coba lagi nanti.');
@@ -155,14 +141,12 @@ export async function subscribePushNotification() {
     }
   }
 
-  // Kirim subscription ke server API
   try {
     console.log("Mengirim subscription ke server...");
     const response = await ApiService.subscribeToNotifications(token, subscription);
-    
+
     if (response.error) {
       console.error('Server menolak subscription:', response.message);
-      // Batalkan subscription di browser jika server menolak
       await subscription.unsubscribe();
       throw new Error(response.message);
     }
@@ -170,7 +154,6 @@ export async function subscribePushNotification() {
     console.log("Berhasil subscribe ke server:", response);
     return subscription;
   } catch (error) {
-    // Jika gagal komunikasi dengan server, batalkan subscription
     if (subscription) {
       try {
         await subscription.unsubscribe();
@@ -178,38 +161,34 @@ export async function subscribePushNotification() {
         console.error('Gagal membatalkan subscription:', unsubError);
       }
     }
-    
+
     throw new Error(`Gagal mendaftarkan ke server notifikasi: ${error.message}`);
   }
 }
 
 /**
- * Berhenti berlangganan (unsubscribe) dari push notification
+ * Berhenti berlangganan (unsubscribe) dari push notification.
+ * @returns {Promise<PushSubscription|null>} Promise yang resolve dengan subscription yang dihapus.
  */
 export async function unsubscribePushNotification() {
-  const token = getAccessToken(); // Ambil token saat fungsi dipanggil
+  const token = getAccessToken();
   if (!token) {
     throw new Error("Token autentikasi diperlukan untuk unsubscribe.");
   }
-  
+
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.getSubscription();
 
   if (subscription) {
-    // --- PERBAIKAN DI SINI ---
-    // KIRIM PERMINTAAN UNSUBSCRIBE KE SERVER API
     console.log("Mengirim permintaan unsubscribe ke server...");
     const response = await ApiService.unsubscribeFromNotifications(token, subscription);
-    
+
     if (response.error) {
-      // Jika server gagal, jangan hapus subscription lokal
       throw new Error(response.message);
     }
-    
-    // Hapus subscription dari browser HANYA JIKA server berhasil
+
     await subscription.unsubscribe();
-    // --- AKHIR PERBAIKAN ---
-    
+
     console.log("Berhasil unsubscribe dari server:", response);
     return subscription;
   }
@@ -219,14 +198,15 @@ export async function unsubscribePushNotification() {
 }
 
 /**
- * Mengecek status langganan saat ini
+ * Mengecek status langganan saat ini.
+ * @returns {Promise<boolean>} Promise yang resolve dengan status langganan.
  */
 export async function getSubscriptionStatus() {
   if (!isPushNotificationSupported()) {
     return false;
   }
-  
+
   const registration = await navigator.serviceWorker.ready;
   const subscription = await registration.pushManager.getSubscription();
-  return !!subscription; // Mengembalikan true jika ada langganan, false jika tidak
+  return !!subscription;
 }

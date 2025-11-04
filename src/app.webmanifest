@@ -1,7 +1,7 @@
 {
-  "name": "Story App Adi",
+  "name": "Story App Izzat",
   "short_name": "StoryApp",
-  "description": "Aplikasi PWA untuk berbagi cerita.",
+  "description": "Aplikasi web untuk share story kalian.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

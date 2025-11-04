@@ -5,14 +5,27 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 import "leaflet/dist/leaflet.css";
 
+/**
+ * Kelas wrapper untuk peta Leaflet dengan fitur tambahan.
+ * Menyediakan antarmuka yang lebih sederhana untuk membuat dan mengelola peta.
+ */
 export default class Map {
   #zoom = 5;
   #map = null;
 
+  /**
+   * Mengecek apakah Geolocation API tersedia di browser.
+   * @returns {boolean} True jika tersedia, false jika tidak.
+   */
   static isGeolocationAvailable() {
     return "geolocation" in navigator;
   }
 
+  /**
+   * Mendapatkan posisi geografis saat ini pengguna.
+   * @param {Object} options - Opsi untuk getCurrentPosition.
+   * @returns {Promise<GeolocationPosition>} Promise yang resolve dengan posisi.
+   */
   static getCurrentPosition(options = {}) {
     return new Promise((resolve, reject) => {
       if (!Map.isGeolocationAvailable()) {
@@ -23,6 +36,12 @@ export default class Map {
     });
   }
 
+  /**
+   * Membangun instance Map dengan opsi yang ditentukan.
+   * @param {string} selector - Selector CSS untuk elemen peta.
+   * @param {Object} options - Opsi untuk pembuatan peta.
+   * @returns {Promise<Map>} Promise yang resolve dengan instance Map.
+   */
   static async build(selector, options = {}) {
     if ("center" in options && options.center) {
       return new Map(selector, options);
@@ -44,6 +63,11 @@ export default class Map {
     return new Map(selector, { ...options, center: jakartaCoordinate });
   }
 
+  /**
+   * Konstruktor untuk membuat instance Map.
+   * @param {string} selector - Selector CSS untuk elemen peta.
+   * @param {Object} options - Opsi untuk inisialisasi peta.
+   */
   constructor(selector, options = {}) {
     this.#zoom = options.zoom ?? this.#zoom;
     const tileOsm = tileLayer(
@@ -69,6 +93,11 @@ export default class Map {
     L.control.layers(baseMaps).addTo(this.#map);
   }
 
+  /**
+   * Membuat ikon marker dengan opsi kustom.
+   * @param {Object} options - Opsi untuk ikon marker.
+   * @returns {L.Icon} Instance ikon Leaflet.
+   */
   createIcon(options = {}) {
     return icon({
       iconRetinaUrl: markerIcon2x,
@@ -81,6 +110,13 @@ export default class Map {
     });
   }
 
+  /**
+   * Menambahkan marker ke peta pada koordinat tertentu.
+   * @param {Array<number>} coordinates - Koordinat [latitude, longitude].
+   * @param {Object} markerOptions - Opsi untuk marker.
+   * @param {Object|null} popupOptions - Opsi untuk popup (harus memiliki properti content).
+   * @returns {L.Marker} Instance marker yang ditambahkan.
+   */
   addMarker(coordinates, markerOptions = {}, popupOptions = null) {
     const newMarker = marker(coordinates, {
       icon: this.createIcon(),
@@ -96,13 +132,19 @@ export default class Map {
     return newMarker;
   }
 
-  // --- BAGIAN YANG HILANG ADA DI SINI ---
-  // Method ini akan "meneruskan" panggilan .on() ke peta Leaflet yang asli.
+  /**
+   * Mendaftarkan event listener pada peta.
+   * @param {string} event - Nama event.
+   * @param {Function} callback - Fungsi callback untuk event.
+   */
   on(event, callback) {
     this.#map.on(event, callback);
   }
 
-  // Method ini akan "meneruskan" panggilan .removeLayer() ke peta Leaflet yang asli.
+  /**
+   * Menghapus layer dari peta.
+   * @param {L.Layer} layer - Layer yang akan dihapus.
+   */
   removeLayer(layer) {
     this.#map.removeLayer(layer);
   }

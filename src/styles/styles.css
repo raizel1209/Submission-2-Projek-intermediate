@@ -28,7 +28,7 @@ body {
 }
 
 header {
-  background-color: #3742fa;
+  background-color: #32CD32;
 }
 
 .main-header {
@@ -82,7 +82,7 @@ header {
   background: none;
   border: none;
   cursor: pointer;
-  color: #3742fa;
+  color: #32CD32;
 }
 
 .nav-list {
@@ -103,7 +103,7 @@ header {
 
 .nav-list li a:hover,
 .nav-list li a.active {
-  background-color: #d6d8ff;
+  background-color: #ccffcc;
   font-weight: bold;
 }
 
@@ -142,7 +142,7 @@ form {
   background: #ffffff;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(55, 66, 250, 0.15);
+  box-shadow: 0 4px 16px rgba(50, 205, 50, 0.15);
   max-width: 600px;
   margin-inline: auto;
   display: flex;
@@ -171,13 +171,13 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: #3742fa;
+  border-color: #32CD32;
   outline: none;
-  box-shadow: 0 0 8px rgba(55, 66, 250, 0.5);
+  box-shadow: 0 0 8px rgba(50, 205, 50, 0.5);
 }
 
 .btn {
-  background-color: #3742fa;
+  background-color: #32CD32;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -188,17 +188,17 @@ textarea:focus {
 }
 
 .btn:hover {
-  background-color: #2f35d0;
+  background-color: #228B22;
 }
 
 .btn-outline {
   background: transparent;
-  border: 2px solid #3742fa;
-  color: #3742fa;
+  border: 2px solid #32CD32;
+  color: #32CD32;
 }
 
 .btn-outline:hover {
-  background-color: #3742fa;
+  background-color: #32CD32;
   color: white;
 }
 
@@ -226,21 +226,21 @@ textarea:focus {
   display: inline-block;
   margin-top: 30px;
   padding: 12px 24px;
-  background: linear-gradient(90deg, #3742fa 0%, #2f35d0 100%);
+  background: linear-gradient(90deg, #32CD32 0%, #228B22 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(55, 66, 250, 0.2);
+  box-shadow: 0 4px 12px rgba(50, 205, 50, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .load-more-btn:hover {
-  background: linear-gradient(90deg, #2f35d0 0%, #1e27a4 100%);
+  background: linear-gradient(90deg, #228B22 0%, #006400 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(55, 66, 250, 0.3);
+  box-shadow: 0 6px 16px rgba(50, 205, 50, 0.3);
 }
 
 #stories-list {
@@ -254,13 +254,13 @@ textarea:focus {
   padding: 16px;
   border-radius: 12px;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(55, 66, 250, 0.1);
+  box-shadow: 0 2px 6px rgba(50, 205, 50, 0.1);
   transition: transform 0.2s ease;
 }
 
 .story-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(55, 66, 250, 0.2);
+  box-shadow: 0 6px 12px rgba(50, 205, 50, 0.2);
 }
 
 .story-image {
@@ -331,12 +331,12 @@ textarea:focus {
 }
 
 footer {
-  background-color: #3742fa;
+  background-color: #32CD32;
   color: #fff;
   padding: 20px;
   text-align: center;
   font-size: 0.9rem;
-  border-top: 3px solid #2f35d0;
+  border-top: 3px solid #228B22;
 }
 
 .centered-page {
@@ -380,7 +380,7 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eef1fa;
+    background-color: #f0fff0;
     min-height: 100vh;
   }
 
@@ -388,7 +388,7 @@ footer {
     background: #ffffff;
     padding: 32px 24px;
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(55, 66, 250, 0.15);
+    box-shadow: 0 4px 16px rgba(50, 205, 50, 0.15);
     max-width: 480px;
     width: 100%;
     display: flex;
@@ -414,13 +414,13 @@ footer {
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
-    background-color: #f4f6fe;
+    background-color: #f0fff0;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
 
   .register-form__title-container input:focus {
-    border-color: #3742fa;
-    box-shadow: 0 0 0 2px rgba(55, 66, 250, 0.2);
+    border-color: #32CD32;
+    box-shadow: 0 0 0 2px rgba(50, 205, 50, 0.2);
     outline: none;
   }
 
@@ -437,7 +437,7 @@ footer {
   }
 
   .register-form__already-have-account a {
-    color: #3742fa;
+    color: #32CD32;
     text-decoration: none;
     font-weight: 500;
   }
@@ -505,7 +505,7 @@ input:focus {
 
 /* === LOGOUT BUTTON === */
 .logout-button {
-  background-color: #5352ed;
+  background-color: #FF0000;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -518,7 +518,7 @@ input:focus {
 }
 
 .logout-button:hover {
-  background-color: #3733e5;
+  background-color: #CC0000;
   transform: scale(1.05);
 }
 
