@@ -1,6 +1,3 @@
-Nama: Muh Adi Kusuma Wiranta
+Nama: Izzat Farahidy Fadlur Rachman
 Profil Dicoding: https://www.dicoding.com/users/izzat12092004/academies
-URL Deployment: https://adi24.netlify.app/
-
-aplikasi ini tidak menggunakan layanan map dengan api api_key
-map ditampilkan menggunakan leaflet + openStreetMap biasa
+URL Deployment: https://ruhm.netlify.app/
