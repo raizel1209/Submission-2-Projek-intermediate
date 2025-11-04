@@ -1,17 +1,16 @@
 export default class HomePresenter {
   #view = null;
   #model = null;
-  #token = null; // <-- 1. Tambahkan properti untuk token
+  #token = null;
   #currentPage = 1;
   #pageSize = 5;
   #hasMoreStories = true;
   #isLoading = false;
 
-  // 2. Terima 'token' di constructor
   constructor({ view, model, token }) { 
     this.#view = view;
     this.#model = model;
-    this.#token = token; // <-- 3. Simpan token yang benar
+    this.#token = token;
   }
 
   async loadInitialStories() {
@@ -45,7 +44,6 @@ export default class HomePresenter {
 
       if (stories.length < this.#pageSize) {
         this.#hasMoreStories = false;
-        // Panggil fungsi 'hideLoadMoreButton' jika ada di view
         if (this.#view.hideLoadMoreButton) {
            this.#view.hideLoadMoreButton();
         }
