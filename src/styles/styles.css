@@ -151,6 +151,10 @@ form {
   transition: all 0.3s ease;
 }
 
+.login__title {
+  text-align: center;
+}
+
 .form-control {
   display: flex;
   flex-direction: column;
